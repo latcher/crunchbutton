@@ -32,6 +32,12 @@ RUN echo "cgi.fix_pathinfo = 0;" >> /usr/local/etc/php/conf.d/fix_pathinfo.ini
 RUN echo " \n\
 listen = 127.0.0.1:9000" >> /usr/local/etc/php-fpm.conf
 
+RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
+    && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini
+
 ADD ./ /app
 RUN php --ini
 RUN cd /app && curl -sS https://getcomposer.org/installer | php
@@ -44,9 +50,9 @@ RUN mkdir /tmp/data && chmod 0777 /tmp/data
 RUN mkdir /tmp/min && chmod 0777 /tmp/min
 
 # twilio ssl fix
-ADD ssl/twilio.der.crt /usr/local/share/ca-certificates/twilio.der.crt
-RUN chmod 0644 /usr/local/share/ca-certificates/twilio.der.crt
-RUN chown root.root /usr/local/share/ca-certificates/twilio.der.crt
-RUN /usr/sbin/update-ca-certificates
+#ADD ssl/twilio.der.crt /usr/local/share/ca-certificates/twilio.der.crt
+#RUN chmod 0644 /usr/local/share/ca-certificates/twilio.der.crt
+#RUN chown root.root /usr/local/share/ca-certificates/twilio.der.crt
+#RUN /usr/sbin/update-ca-certificates
 
-CMD /app/cli/build.sh && nginx && php-fpm
+CMD sleep 20 && /app/cli/build.sh && nginx && php-fpm

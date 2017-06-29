@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install mbstring \
 	&& docker-php-ext-install zip
 
+
 # https://github.com/docker-library/php/issues/262#issuecomment-233109231
 # RUN docker-php-source extract \
 #     && curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/3.0.0.tar.gz \

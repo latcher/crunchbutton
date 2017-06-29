@@ -43,7 +43,6 @@ RUN php --ini
 RUN cd /app && curl -sS https://getcomposer.org/installer | php
 RUN cd /app && php composer.phar install --no-dev --optimize-autoloader --prefer-dist
 
-
 #RUN mkdir /app/cache/data && chmod 0777 /app/cache/data
 #RUN mkdir /app/cache/min && chmod 0777 /app/cache/min
 RUN mkdir /tmp/data && chmod 0777 /tmp/data
